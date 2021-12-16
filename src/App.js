@@ -1,24 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState, useMemo, createContext} from 'react';
+
+import Home from './components/Home';
+import GlobalStyle from './styles/global';
+
+import {ThemeProvider} from 'styled-components';
+import theme from './styles/theme/default';
+
+export const ModeTheme = createContext('dark');
 
 function App() {
+  //estado da aplicação (dark ou light)
+  const [mode, setMode] = useState('dark');
+
+  //O hook useMemo salva o valor do tema para não ficar recalculando quando acontecer alguma renderização na tela.
+  const currentTheme = useMemo(()=>{
+    return theme[mode] || theme.dark
+  }, [mode])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ModeTheme.Provider value={ {mode : mode, setMode : setMode}}>
+      <ThemeProvider theme={currentTheme}>
+        <GlobalStyle />
+        <Home />
+    </ThemeProvider>
+    </ModeTheme.Provider>
   );
 }
 
